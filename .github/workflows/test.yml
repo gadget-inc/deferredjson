@@ -1,0 +1,32 @@
+name: "Test"
+on:
+  push:
+  workflow_call:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup-test-env
+      - name: Build package
+        run: pnpm build
+      - name: Test
+        run: pnpm test
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup-test-env
+      - name: Build package
+        run: pnpm build
+      - name: Lint
+        run: pnpm lint
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup-test-env
+      - name: Build package
+        run: pnpm build
+      - name: Typecheck
+        run: pnpm typecheck
