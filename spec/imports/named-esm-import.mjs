@@ -1,2 +1,2 @@
-import { LazyJSON } from "../../dist/esm/index.js";
-LazyJSON.parse("{}");
+import { DeferredJSON } from "../../dist/esm/index.js";
+DeferredJSON.parse("{}");

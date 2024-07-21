@@ -1,13 +1,13 @@
 {
-  "name": "lazyjson",
+  "name": "deferredjson",
   "version": "0.1.0",
   "files": [
     "Readme.md",
     "dist/**/*"
   ],
   "license": "MIT",
-  "repository": "github:gadget-inc/lazyjson",
-  "homepage": "https://github.com/gadget-inc/lazyjson",
+  "repository": "github:gadget-inc/deferredjson",
+  "homepage": "https://github.com/gadget-inc/deferredjson",
   "type": "module",
   "exports": {
     ".": {

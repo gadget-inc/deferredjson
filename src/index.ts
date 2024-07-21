@@ -1,14 +1,14 @@
-const prefix = "__lzjs";
+const prefix = "__djjson";
 const quotedPrefix = '"' + prefix;
 
-export const kIsLazyJSON = Symbol("lazy-json/isLazyJSON");
-export const kIsParsed = Symbol("lazy-json/isParsed");
+export const kIsDeferredJSON = Symbol("dj/isDJ");
+export const kIsParsed = Symbol("dj/isParsed");
 
 /**
  * Lazy version of JSON.parse that only actually deserializes a JSON string when properties on the JSON string are accessed.
  * If we're just passing this value through JS land and don't actually need to touch it, there's a fast path that can re-serialize the JSON string right as output without parsing and re-stringifying it
  */
-export const LazyJSON = {
+export const DeferredJSON = {
   parse: (jsonString: string): any => {
     const isObject = jsonString.startsWith("{");
     const isArray = jsonString.startsWith("[");
@@ -20,7 +20,7 @@ export const LazyJSON = {
     const target = isArray ? [] : {};
 
     const parse = () => {
-      parsed = LazyJSON.actuallyParse(jsonString);
+      parsed = DeferredJSON.actuallyParse(jsonString);
       if (isArray) {
         // for arrays only, we do a shallow copy after parsing so that things like obj.map work, as they iterate the target without going through the proxy
         for (const key in parsed) {
@@ -32,22 +32,22 @@ export const LazyJSON = {
     const handlers: ProxyHandler<any> = {
       get(_target, property, _receiver) {
         if (property === "toJSON") {
-          // the toJSON of a lazy json object returns a special sigil that is replaced at the end of stringification if being stringified by LazyJSON.stringify
+          // the toJSON of a lazy json object returns a special sigil that is replaced at the end of stringification if being stringified by DeferredJSON.stringify
           return () => {
-            if (LazyJSON.snipper) {
-              return LazyJSON.snipper.getSigil(jsonString);
+            if (DeferredJSON.snipper) {
+              return DeferredJSON.snipper.getSigil(jsonString);
             } else {
               if (!parsed) parse();
               return parsed;
             }
           };
-        } else if (property === kIsLazyJSON) {
+        } else if (property === kIsDeferredJSON) {
           return true;
         } else if (property === kIsParsed) {
           return !!parsed;
         } else if (property == "then") {
           if (!parsed) {
-            // avoid eagerly parsing when LazyJSON values are awaited
+            // avoid eagerly parsing when DeferredJSON values are awaited
             return undefined;
           }
         }
@@ -55,11 +55,11 @@ export const LazyJSON = {
         return Reflect.get(parsed, property, parsed);
       },
       has(_target, property) {
-        if (property === "toJSON" || property === kIsLazyJSON || property === kIsParsed) {
+        if (property === "toJSON" || property === kIsDeferredJSON || property === kIsParsed) {
           return true;
         } else if (property == "then") {
           if (!parsed) {
-            // avoid eagerly parsing when LazyJSON values are awaited
+            // avoid eagerly parsing when DeferredJSON values are awaited
             return false;
           }
         }
@@ -105,9 +105,9 @@ export const LazyJSON = {
     return new Proxy(target, handlers);
   },
   stringify(value: any) {
-    const oldSnipper = LazyJSON.snipper;
+    const oldSnipper = DeferredJSON.snipper;
     const snipper = new Snipper();
-    LazyJSON.snipper = snipper;
+    DeferredJSON.snipper = snipper;
     try {
       let string = JSON.stringify(value);
 
@@ -134,7 +134,7 @@ export const LazyJSON = {
       }
       return string;
     } finally {
-      LazyJSON.snipper = oldSnipper;
+      DeferredJSON.snipper = oldSnipper;
     }
   },
   snipper: null as Snipper | null,

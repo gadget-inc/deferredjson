@@ -2,7 +2,7 @@
 // https://jestjs.io/docs/en/configuration.html
 
 export default {
-  displayName: "lazyjson",
+  displayName: "deferredjson",
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
