@@ -1,4 +1,4 @@
-# `DeferredJSON`
+# `DeferredJSON` ![test](https://github.com/gadget-inc/deferredjson/actions/workflows/test.yml/badge.svg?branch=main&event=push) ![bundle size](https://img.shields.io/bundlephobia/min/deferredjson)
 
 `DeferredJSON` offers a drop in replacement for `JSON.stringify` and `JSON.parse` that defers parsing until the data is actually needed. If you happen to serialize a DeferredJSON instance later to a string without ever touching it, than neither the parse nor stringify needs to happen, and DeferredJSON can just feed out the already serialized contents stored at the start.
 
