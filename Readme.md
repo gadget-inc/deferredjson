@@ -27,6 +27,15 @@ obj.foo; // "bar"
 // object is now parsed and quacks the same as if JSON.parse was used
 ```
 
+It can also be beneficial to register `DeferredJSON.parse` as the default JSON parser for libraries you use for parsing JSON. For example, you can register it as the default JSON parser for the `pg` Postgres client library like so:
+
+```typescript
+import { types } from "pg";
+
+types.setTypeParser(types.builtins.JSON, DeferredJSON.parse);
+types.setTypeParser(types.builtins.JSONB, DeferredJSON.parse);
+```
+
 There's a few optimizations `DeferredJSON.parse` makes to be aware of:
 
 - if the serialized JSON is a scalar value like a number or a boolean, it isn't wrapped in a `DeferredJSON` proxy, since parsing it is so cheap.
@@ -59,3 +68,5 @@ DeferredJSON.stringify(response);
 `DeferredJSON` is written with high-performance node.js apps in mind and does its best to add as little overhead as possible, but there is some. When accessing keys of a `DeferredJSON` object, there is a small amount of overhead added to go through the proxy for each property access at the root-level node that is parsed. If you need absolutely no overhead in accessing the data you are parsing, then don't use `DeferredJSON`.
 
 For serialization, `DeferredJSON` also adds some small overhead. `DeferredJSON` still uses the JS VM's `JSON.stringify` under the hood to get maximum performance and all the optimizations baked in there, but then does a second pass over the serialized string to interpolate if needed. This adds some overhead, but for JSON objects of any size, the performance is still much better than doing the whole parse and re-serializing of the objects in question.
+
+`DeferredJSON` was extracted out of [Gadget](https://gadget.dev) where it made a major performance difference for the JSON responses Gadget serves up.
