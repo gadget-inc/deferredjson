@@ -29,6 +29,7 @@
     "lint:prettier": "NODE_OPTIONS=\"--max-old-space-size=4096\" prettier --check \"./**/*.{js,ts,tsx}\"",
     "lint:eslint": "NODE_OPTIONS=\"--max-old-space-size=4096\" eslint --quiet --ext ts,tsx .",
     "lint:fix": "NODE_OPTIONS=\"--max-old-space-size=4096\" prettier --write --check \"./**/*.{js,ts,tsx}\" && eslint --ext ts,tsx --fix .",
+    "x": "tsx",
     "prepublishOnly": "pnpm build",
     "prerelease": "gitpkg publish"
   },
@@ -45,11 +46,15 @@
     "eslint": "^8.57.0",
     "execa": "^9.3.0",
     "jest": "^29.7.0",
+    "markdown-table": "^3.0.3",
     "msgpackr": "^1.11.0",
     "prettier": "^2.8.8",
+    "tinybench": "^2.8.0",
+    "tsx": "^4.16.2",
     "typescript": "5.4.5"
   },
   "dependencies": {
     "lodash-es": "^4.17.21"
-  }
+  },
+  "packageManager": "pnpm@8.12.0+sha256.553e4eb0e2a2c9abcb419b3262bdc7aee8ae3c42e2301a1807d44575786160c9"
 }
